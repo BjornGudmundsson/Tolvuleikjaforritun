@@ -34,10 +34,24 @@ Bullet.prototype.velY = 1;
 Bullet.prototype.lifeSpan = 3 * SECS_TO_NOMINALS;
 
 Bullet.prototype.update = function (du) {
-    
+
     // TODO: Implement this
 
     // NB: Remember to handle screen-wrapping... and "death"
+    if(this.lifeSpan === 0) return;
+    var newX = this.cx;
+    var newY = this.cy;
+    this.lifespan -= SECS_TO_NOMINALS;
+    var isXWrapped = util.isBetween(newX, 0, g_canvas.width);
+    var isYWrapped = util.isBetween(newY, 0, g_canvas.height);
+    newX = this.cx + this.velX*du;
+    newY = this.cy + this.velY*du;
+    if(!isXWrapped && !isYWrapped){
+      util.wrapRange(newX, 0, g_canvas.width);
+      util.wrapRange(newY, 0, g_canvas.height);
+    }
+    this.setPos(newX, newY);
+
 };
 
 Bullet.prototype.setPos = function (cx, cy) {

@@ -59,7 +59,7 @@ _findNearestShip : function(posX, posY) {
     for (var i = 0; i < this._ships.length; i++) {
       var x = this._ships[i].cx;
       var y = this._ships[i].cy;
-      var dist = ((x-posX)*(x-posX) + (y-posY)*(y-posY));
+      var dist = util.distSq(x, y, posX, posY);
       if(dist < minDist){
         closestShip = this._ships[i];
         closestIndex = i;
@@ -102,7 +102,18 @@ init: function() {
 fireBullet: function(cx, cy, velX, velY, rotation) {
 
     // TODO: Implement this
-
+    var w = g_sprites.ship.width;
+    var h = g_sprites.ship.height;
+    var newX = cx +Math.sin(rotation)*h/2;
+    var newY = cy -Math.cos(rotation)*h/2;
+    var bulletObj = {
+      velX : velX,
+      velY : velY,
+      rotation : rotation
+    };
+    var bullet = new Bullet(bulletObj);
+    bullet.setPos(newX, newY);
+    this._bullets.push(bullet);
 },
 
 generateShip : function(descr) {
@@ -123,10 +134,12 @@ yoinkNearestShip : function(xPos, yPos) {
     // NB: Don't forget the "edge cases"
     var w = g_canvas.width,
         h = g_canvas.height;
-    var ship = this._findNearestShip(xPos, yPos);
-    ship.theShip.cx = xPos;
-    ship.theShip.cy = yPos;
-    this._ships[ship.closestIndex] = ship.theShip;
+      if(util.isBetween(xPos,0, g_canvas.width) && util.isBetween(yPos,0, g_canvas.height)){
+        var ship = this._findNearestShip(xPos, yPos);
+        ship.theShip.cx = xPos;
+        ship.theShip.cy = yPos;
+        this._ships[ship.closestIndex] = ship.theShip;
+      }
 },
 
 resetShips: function() {
@@ -153,6 +166,10 @@ update: function(du) {
     this._rocks.forEach((rock) => {
       rock.update(du);
     });
+
+    this._bullets.forEach((bullet) =>{
+      bullet.update(du);
+    });
 },
 
 render: function(ctx) {
@@ -169,6 +186,9 @@ render: function(ctx) {
       rock.render(ctx);
     });
 
+    this._bullets.forEach((bullet) =>{
+      bullet.render(ctx);
+    });
 
 }
 
