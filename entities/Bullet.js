@@ -41,6 +41,7 @@ Bullet.prototype.update = function (du) {
     if(this.lifeSpan === 0) return;
     var newX = this.cx;
     var newY = this.cy;
+    this.rotation += consts.FULL_CIRCLE/16
     this.lifespan -= SECS_TO_NOMINALS;
     var isXWrapped = util.isBetween(newX, 0, g_canvas.width);
     var isYWrapped = util.isBetween(newY, 0, g_canvas.height);
@@ -76,7 +77,8 @@ Bullet.prototype.render = function (ctx) {
     // NB: You can make things fade by setting `ctx.globalAlpha` to
     // a value between 0 (totally transparent) and 1 (totally opaque).
 
-    var fadeThresh = Bullet.prototype.lifeSpan / 3;
+    var fadeThresh = this.lifeSpan;
+    ctx.globalAlpha = fadeThresh/SECS_TO_NOMINALS;
 
     // ..YOUR STUFF..
 
