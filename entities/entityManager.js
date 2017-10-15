@@ -59,7 +59,7 @@ _findNearestShip : function(posX, posY) {
     for (var i = 0; i < this._ships.length; i++) {
       var x = this._ships[i].cx;
       var y = this._ships[i].cy;
-      var dist = util.distSq(x, y, posX, posY);
+      var dist = util.wrappedDistSq(x, y, posX, posY, g_canvas.width, g_canvas.height);
       if(dist < minDist){
         closestShip = this._ships[i];
         closestIndex = i;
@@ -125,7 +125,15 @@ generateShip : function(descr) {
 killNearestShip : function(xPos, yPos) {
     // TODO: Implement this
 
-    // NB: Don't forget the "edge cases"
+    // NB: Don't forget the "edge cases"\
+    console.log(xPos);
+    var w = g_canvas.width,
+        h = g_canvas.height;
+      if(util.isBetween(xPos,0, g_canvas.width) && util.isBetween(yPos,0, g_canvas.height)){
+        var ship = this._findNearestShip(xPos, yPos);
+        console.log(ship);
+        this._ships[ship.closestIndex].dead = true;
+      }
 },
 
 yoinkNearestShip : function(xPos, yPos) {
@@ -160,9 +168,15 @@ update: function(du) {
 
     // NB: Remember to handle the "KILL_ME_NOW" return value!
     //     and to properly update the array in that case.
-    this._ships.forEach((ship) => {
-      ship.update(du);
-    });
+
+    for (var i = 0; i < this._ships.length; i++) {
+      if(this._ships[i].dead){
+        this._ships.splice(i, 1);
+      }
+      else{
+        this._ships[i].update(du);
+      }
+    }
     this._rocks.forEach((rock) => {
       rock.update(du);
     });
@@ -185,10 +199,14 @@ render: function(ctx) {
     this._rocks.forEach((rock) => {
       rock.render(ctx);
     });
-
-    this._bullets.forEach((bullet) =>{
-      bullet.render(ctx);
-    });
+    for (var i = 0; i < this._bullets.length; i++) {
+      if(this._bullets[i].alive === -1){
+        this._bullets.splice(i, 1);
+      }
+      else{
+        this._bullets[i].render(ctx);
+      }
+    }
 
 }
 

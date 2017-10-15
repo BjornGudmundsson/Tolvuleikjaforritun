@@ -29,6 +29,7 @@ Bullet.prototype.cx = 200;
 Bullet.prototype.cy = 200;
 Bullet.prototype.velX = 1;
 Bullet.prototype.velY = 1;
+Bullet.prototype.alive = 1;
 
 // Convert times from seconds to "nominal" time units.
 Bullet.prototype.lifeSpan = 3 * SECS_TO_NOMINALS;
@@ -38,11 +39,10 @@ Bullet.prototype.update = function (du) {
     // TODO: Implement this
 
     // NB: Remember to handle screen-wrapping... and "death"
-    if(this.lifeSpan === 0) return;
+
     var newX = this.cx;
     var newY = this.cy;
     this.rotation += consts.FULL_CIRCLE/16
-    this.lifespan -= SECS_TO_NOMINALS;
     var isXWrapped = util.isBetween(newX, 0, g_canvas.width);
     var isYWrapped = util.isBetween(newY, 0, g_canvas.height);
     newX = this.cx + this.velX*du;
@@ -52,6 +52,8 @@ Bullet.prototype.update = function (du) {
       util.wrapRange(newY, 0, g_canvas.height);
     }
     this.setPos(newX, newY);
+
+    this.lifeSpan -= du;
 
 };
 
@@ -76,16 +78,19 @@ Bullet.prototype.render = function (ctx) {
 
     // NB: You can make things fade by setting `ctx.globalAlpha` to
     // a value between 0 (totally transparent) and 1 (totally opaque).
-
     var fadeThresh = this.lifeSpan;
-    ctx.globalAlpha = fadeThresh/SECS_TO_NOMINALS;
+    if(this.lifeSpan <= 0){
+      this.alive = -1;
+    }
+
+    ctx.globalAlpha = fadeThresh/(3*SECS_TO_NOMINALS);
 
     // ..YOUR STUFF..
 
     g_sprites.bullet.drawWrappedCentredAt(
 	ctx, this.cx, this.cy, this.rotation
     );
-
     // ..YOUR STUFF..
+    ctx.globalAlpha = 1;
 
 };
