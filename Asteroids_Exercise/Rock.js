@@ -62,6 +62,7 @@ Rock.prototype.randomiseVelocity = function () {
 Rock.prototype.update = function (du) {
 
     // TODO: YOUR STUFF HERE! --- Unregister and check for death
+    spatialManager.unregister(this);
 
     this.cx += this.velX * du;
     this.cy += this.velY * du;

@@ -34,14 +34,20 @@ _entities : [],
 getNewSpatialID : function() {
 
     // TODO: YOUR STUFF HERE!
-    return this._nextSpatialID++;
+    var nextSpatialID = this._nextSpatialID;
+    ++this._nextSpatialID;
+    return nextSpatialID;
 
 },
 
 register: function(entity) {
-    var pos = entity.getPos();
-    var spatialID = entity.getSpatialID();
-    this._entities[spatialID] = entity;
+  var pos = entity.getPos();
+  var spatialID = entity.getSpatialID();
+
+  this._entities[spatialID] = entity;
+  this._entities[spatialID].posX = pos.posX;
+  this._entities[spatialID].posY = pos.posY;
+  this._entities[spatialID].radius = entity.getRadius();
     // TODO: YOUR STUFF HERE!
 
 },

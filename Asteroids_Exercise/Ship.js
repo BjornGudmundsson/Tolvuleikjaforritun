@@ -261,16 +261,6 @@ Ship.prototype.maybeFireBullet = function () {
            this.rotation);
 
     }
-
-    if(this.isColliding()) {
-        this.warp();
-    }
-
-    if(this._isDeadNow) {
-        return entityManager.KILL_ME_NOW;
-    } else {
-        spatialManager.register(this);
-    }
 };
 
 Ship.prototype.getRadius = function () {
